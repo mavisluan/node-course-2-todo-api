@@ -1,39 +1,29 @@
-const mongoose = require('mongoose')
+// load library imports
+const express = require('express')
+const bodyParser = require('body-parser')
+// load local imports
+const { mongoose } = require('./db/mongoose')
+const { Todo } = require('./models/todo')
+const { User } = require('./models/user')
 
-mongoose.Promise = global.Promise
+const app = express()
 
-mongoose.connect('mongodb://localhost:27017/TodoApp', { useNewUrlParser: true })
+// use express middleware
+app.use(bodyParser.json())
+// create Post route to create new todos
+app.post('/todos', (req, res) => {
+    console.log(req.body)
+    const todo = new Todo({
+        text: req.body.text
+    })
 
-let Todo = mongoose.model('Todo', {
-    text: {
-        type: String
-    },
-    completed: {
-        type: Boolean
-    },
-    completedAt: {
-        type: Number
-    }
+    todo.save().then((doc) => {
+        res.send(doc)
+    }, (e) => {
+        res.status(400).send(e)
+    })
 })
 
-// let newTodo = new Todo({
-//     text: 'Cook dinner'
-// })
-
-// newTodo.save().then(doc => {
-//     console.log(`Saved todo`, doc)
-// }, (e) => {
-//     console.log(`Unable to save todo`)
-// })
-
-let otherTodo = new Todo({
-    text: 'Clean the floor',
-    completed: true,
-    completedAt: 375223
-})
-
-otherTodo.save().then(doc => {
-    console.log(`Saved todo`, doc)
-}, (e) => {
-    console.log(`Unable to save todo`)
+app.listen(3000, () => {
+    console.log(`Started on port 3000`)
 })
