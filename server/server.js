@@ -12,7 +12,7 @@ const app = express()
 app.use(bodyParser.json())
 // create Post route to create new todos
 app.post('/todos', (req, res) => {
-    console.log(req.body)
+    // console.log(req.body)
     const todo = new Todo({
         text: req.body.text
     })
@@ -20,6 +20,14 @@ app.post('/todos', (req, res) => {
     todo.save().then((doc) => {
         res.send(doc)
     }, (e) => {
+        res.status(400).send(e)
+    })
+})
+
+app.get('/todos', (req, res) => {
+    Todo.find().then((todos) => {
+        res.send({todos})
+    }, (e)=> {
         res.status(400).send(e)
     })
 })

@@ -22,7 +22,6 @@ describe('POST /todos', () => {
                 if(err) {
                     return done(err)
                 }
-
                 Todo.find().then((todos) => {
                     expect(todos.length).toBe(1)
                     expect(todos[0].text).toBe(text)
