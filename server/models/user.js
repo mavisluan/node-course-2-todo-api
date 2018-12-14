@@ -35,7 +35,6 @@ const UserSchema = new mongoose.Schema({
 UserSchema.methods.toJSON = function () {
     const user = this
     const userObject = user.toObject()
-    
     return _.pick(userObject, ['_id', 'email'])
 }
 
@@ -43,10 +42,7 @@ UserSchema.methods.generateAuthToken = function () {
     const user = this
     const access = 'auth'
     const token = JWT.sign({_id: user._id.toHexString(), access }, 'abc123').toString()
-//  push the token into tokens array
     user.tokens = user.tokens.concat([{ access, token }])
-//  save the user into db 
-//  when you return two chain in a promise, you return another promise. We're returning a value, which will get passed as the success argument for the next then call. (server.js)
     return user.save().then(() => {
         return token
     })
