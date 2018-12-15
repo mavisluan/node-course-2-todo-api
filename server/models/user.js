@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
-const JWT = require('jsonwebtoken')
+const jwt = require('jsonwebtoken')
 const _ = require('lodash')
 
 const UserSchema = new mongoose.Schema({
@@ -41,10 +41,27 @@ UserSchema.methods.toJSON = function () {
 UserSchema.methods.generateAuthToken = function () {
     const user = this
     const access = 'auth'
-    const token = JWT.sign({_id: user._id.toHexString(), access }, 'abc123').toString()
+    const token = jwt.sign({_id: user._id.toHexString(), access }, 'abc123').toString()
     user.tokens = user.tokens.concat([{ access, token }])
     return user.save().then(() => {
         return token
+    })
+}
+
+UserSchema.statics.findByToken = function (token) {
+    const User = this
+    let decoded
+
+    try {
+        decoded = jwt.verify(token, 'abc123')
+    } catch (e) {
+        return Promise.reject()
+    }
+
+    return User.findOne({ 
+        '_id': decoded._id,
+        'tokens.token': token,
+        'tokens.access': 'auth'
     })
 }
 
