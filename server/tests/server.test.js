@@ -13,11 +13,10 @@ beforeEach(populateTodos)
 describe('POST /todos', () => {
     it('should create a new todo', (done) => {
         const text = 'Test todo text'
-
         request(app)
             .post('/todos')
-            .send({text})
             .set('x-auth', users[0].tokens[0].token)
+            .send({text})
             .expect(200)
             .expect((res) => {
                 expect(res.body.text).toBe(text)
@@ -38,8 +37,8 @@ describe('POST /todos', () => {
 
         request(app)
             .post('/todos')
-            .send({})
             .set('x-auth', users[0].tokens[0].token)
+            .send({})
             .expect(400)
             .end((err, res) => {
                 if(err) {
